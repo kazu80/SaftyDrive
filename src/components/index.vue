@@ -97,11 +97,17 @@
             return {
                 speed                   : 0,
                 acceleration_X          : 0,
+                acceleration_X_array: [],
                 acceleration_Y          : 0,
+                acceleration_Y_array: [],
                 acceleration_Z          : 0,
+                acceleration_Z_array: [],
                 gyro_pitch              : 0,
+                gyro_pitch_array    : [],
                 gyro_roll               : 0,
+                gyro_roll_array     : [],
                 gyro_yaw                : 0,
+                gyro_yaw_array      : [],
                 steeringWheel           : 0,
                 brakeOperation          : null,
                 acceleratorPedalPosition: 0,
@@ -115,7 +121,67 @@
                 //heading: 0,
                 //speed: 0,
 
+                max_params              : {
+                    acceleration_X: 0,
+                    acceleration_Y: 0,
+                    acceleration_Z: 0,
+                    gyro_pitch    : 0,
+                    gyro_roll     : 0,
+                    gyro_yaw      : 0,
+                },
             }
+        },
+
+        watch: {
+
+            acceleration_X_array: function () {
+                if (this.$data.acceleration_X_array.length >= 5) {
+                    this.$data.max_params.acceleration_X = Math.max.apply (null, this.$data.acceleration_X_array);
+                    this.$data.acceleration_X_array = [];
+                    this.sendVehicleData ();
+                }
+            },
+
+            acceleration_Y_array: function () {
+                if (this.$data.acceleration_Y_array.length >= 5) {
+                    this.$data.max_params.acceleration_Y = Math.max.apply (null, this.$data.acceleration_Y_array);
+                    this.$data.acceleration_Y_array = [];
+                    this.sendVehicleData ();
+                }
+            },
+
+            acceleration_Z_array: function () {
+                if (this.$data.acceleration_Z_array.length >= 5) {
+                    this.$data.max_params.acceleration_Z = Math.max.apply (null, this.$data.acceleration_Z_array);
+                    this.$data.acceleration_Z_array = [];
+                    this.sendVehicleData ();
+                }
+            },
+
+            gyro_pitch_array: function () {
+                if (this.$data.gyro_pitch_array.length >= 5) {
+                    this.$data.max_params.gyro_pitch = Math.max.apply (null, this.$data.gyro_pitch_array);
+                    this.$data.gyro_pitch_array = [];
+                    this.sendVehicleData ();
+                }
+            },
+
+            gyro_roll_array: function () {
+                if (this.$data.gyro_roll_array.length >= 5) {
+                    this.$data.max_params.gyro_roll = Math.max.apply (null, this.$data.gyro_roll_array);
+                    this.$data.gyro_roll_array = [];
+                    this.sendVehicleData ();
+                }
+            },
+
+            gyro_yaw_array: function () {
+                if (this.$data.gyro_yaw_array.length >= 5) {
+                    this.$data.max_params.gyro_yaw = Math.max.apply (null, this.$data.gyro_yaw_array);
+                    this.$data.gyro_yaw_array = [];
+                    this.sendVehicleData ();
+                }
+            },
+
         },
 
         created: function () {
@@ -133,6 +199,10 @@
                     this.$data.acceleration_X = Acceleration.x;
                     this.$data.acceleration_Y = Acceleration.y;
                     this.$data.acceleration_Z = Acceleration.z;
+
+                    this.$data.acceleration_X_array.push (Acceleration.x);
+                    this.$data.acceleration_Y_array.push (Acceleration.y);
+                    this.$data.acceleration_Z_array.push (Acceleration.z);
                 }
             );
 
@@ -141,6 +211,10 @@
                     this.$data.gyro_pitch = gyro.pitchRate;
                     this.$data.gyro_roll = gyro.rollRate;
                     this.$data.gyro_yaw = gyro.yawRate;
+
+                    this.$data.gyro_pitch_array.push (gyro.pitchRate);
+                    this.$data.gyro_roll_array.push (gyro.rollRate);
+                    this.$data.gyro_yaw_array.push (gyro.yawRate);
                 }
             );
 
@@ -182,6 +256,32 @@
         },
 
         methods: {
+
+            sendVehicleData: function () {
+                if (
+                    this.$data.max_params.acceleration_X &&
+                    this.$data.max_params.acceleration_Y &&
+                    this.$data.max_params.acceleration_Z &&
+                    this.$data.max_params.gyro_pitch &&
+                    this.$data.max_params.gyro_roll &&
+                    this.$data.max_params.gyro_yaw
+                ) {
+
+                    // send server !!!
+                    console.log (this.$data.max_params);
+
+                    //
+                    this.$data.max_params = {
+                        acceleration_X: 0,
+                        acceleration_Y: 0,
+                        acceleration_Z: 0,
+                        gyro_pitch    : 0,
+                        gyro_roll     : 0,
+                        gyro_yaw      : 0,
+                    };
+                }
+            },
+
             changeMode: function (val) {
                 this.$emit ("changeMode", val);
             }
