@@ -38,14 +38,14 @@
         margin-top : 30px;
         width      : 100%;
         font-size  : 4rem;
-        text-align : center;
+        text-align : left;
         z-index    : 10;
     }
 
     .video-container {
         position       : absolute;
         top            : 0;
-        left           : 0;
+        left           : 500px;
         padding-right  : 1000px;
         padding-bottom : 1000px;
     }
@@ -54,7 +54,7 @@
         margin-top : 30px;
         width      : 100%;
         font-size  : 2rem;
-        text-align : center;
+        text-align : left;
     }
 
     .data-wrapper .data {
@@ -130,7 +130,6 @@
 
             const handleAcceleration = navigator.vehicle.acceleration.subscribe (
                 Acceleration => {
-
                     this.$data.acceleration_X = Acceleration.x;
                     this.$data.acceleration_Y = Acceleration.y;
                     this.$data.acceleration_Z = Acceleration.z;
