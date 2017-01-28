@@ -6,8 +6,9 @@
 
 <style>
   #app {
+    position: absolute;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: green;
   }
 </style>

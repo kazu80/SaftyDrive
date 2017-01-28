@@ -1,3 +1,7 @@
+window.$ = window.jQuery = require('jquery');
+//import '../node_modules/materialize-css/dist/css/materialize.min.css'
+//import '../node_modules/materialize-css/dist/js/materialize.min.js'
+
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'

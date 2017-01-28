@@ -10,6 +10,8 @@ var cssSourceMapDev = (env === 'development' && config.dev.cssSourceMap)
 var cssSourceMapProd = (env === 'production' && config.build.productionSourceMap)
 var useCssSourceMap = cssSourceMapDev || cssSourceMapProd
 
+var webpack = require ('webpack');
+
 module.exports = {
   entry: {
     app: './src/main.js'
@@ -65,7 +67,11 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
-      }
+      },
+        {
+            test   : /\.css$/,
+            loaders: ['style', 'css']
+        },
     ]
   },
   vue: {
@@ -75,5 +81,12 @@ module.exports = {
         browsers: ['last 2 versions']
       })
     ]
-  }
+  },
+    plugins: [
+        new webpack.ProvidePlugin ({
+            $              : "jquery",
+            jQuery         : "jquery",
+            'window.jQuery': 'jquery',
+        })
+    ],
 }
