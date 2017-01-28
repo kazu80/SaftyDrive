@@ -4,15 +4,14 @@
         <h3 class="page_title">Safety Evaluation</h3>
 
         <div class="point">
-            00
+            {{point}}
         </div>
 
-        <div class="waves-effect waves-light btn btn_start">START</div>
+        <div class="waves-effect waves-light btn btn_start" @click="changeMode('start')">START</div>
     </div>
 </template>
 
 <style>
-
     .page_title {
         position: absolute;
         top: 130px;
@@ -51,6 +50,8 @@
 
 <script>
     export default {
+        props: ["mode", "point"],
+
         data () {
             return {
                 foo: 'bar',
@@ -59,8 +60,12 @@
 
         created: function () {
 
+        },
 
-
+        methods: {
+            changeMode: function (val) {
+                this.$emit ("changeMode", val);
+            }
         }
     }
 </script>
