@@ -1,5 +1,9 @@
 <template>
-    <div class="container" :class="{ 'background-color-animation_stop' : true}">
+    <div class="container" :class="{
+    'background-color-animation_stop' : intensity <= 2,
+    'background-color-animation_warning' : intensity >= 3 && intensity <= 5,
+    'background-color-animation_danger' : intensity >= 6,
+    }">
 
         <div class="_header">
             <a class="btn-floating btn-large waves-effect waves-light blue" href="javascript:void(0)" @click="changeMode('index')">index</a>
@@ -7,7 +11,7 @@
             <a class="btn-floating btn-large waves-effect waves-light red" href="javascript:void(0)" @click="changeMode('intensity')">intensity</a>
         </div>
 
-        <_car v-if="mode == 'index'"></_car>
+        <_car :intensity="intensity" v-if="mode == 'index'"></_car>
 
         <_tire class="tire_component" v-if="mode == 'index_'"></_tire>
 
@@ -70,15 +74,50 @@
         animation-direction       : alternate;
     }
 
+    .background-color-animation_warning {
+        animation-name            : color_warning;
+        animation-duration        : 2000ms;
+        animation-iteration-count : infinite;
+        animation-direction       : alternate;
+    }
+
+    .background-color-animation_danger {
+        animation-name            : color_danger;
+        animation-duration        : 2000ms;
+        animation-iteration-count : infinite;
+        animation-direction       : alternate;
+    }
+
     @keyframes color_stop {
         0% {
-            background-color : lightgray;
+            background-color : dodgerblue;
         }
 
         100% {
-            background-color : darkgray;
+            background-color : deepskyblue;
         }
     }
+
+    @keyframes color_warning {
+        0% {
+            background-color : greenyellow;
+        }
+
+        100% {
+            background-color : yellowgreen;
+        }
+    }
+
+    @keyframes color_danger {
+        0% {
+            background-color : orangered;
+        }
+
+        100% {
+            background-color : red;
+        }
+    }
+
 
     @keyframes color_normal {
         0% {
@@ -320,8 +359,6 @@
 
                     this.$data.intensity = Math.round ((raw_intensity - 0.1) / 0.26 * 10);
                     //this.$data.intensity = Math.floor (raw_intensity * 10);
-
-                    console.log (`${raw_intensity}, ${this.$data.intensity}`);
 
                     this.$data.axios.post ('http://localhost:3000/shakes', {"intensity": this.$data.intensity})
                         .then (res => console.log (res))
