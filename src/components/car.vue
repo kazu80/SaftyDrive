@@ -14,7 +14,7 @@
     ._point {
         position            : absolute;
         top                 : 25px;
-        right               : -20px;
+        right               : -5px;
         width               : 80px;
         height              : 80px;
         padding             : 15px 28px;
@@ -25,6 +25,8 @@
         transform           : rotate(45deg);
         font-size           : 3rem;
         color               : deeppink;
+        text-shadow         : 1px 1px 3px #ffffff;
+        text-align          : center;
     }
 
     .car-wrapper {

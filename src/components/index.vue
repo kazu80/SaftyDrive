@@ -357,8 +357,14 @@
 
                     let raw_intensity = Math.sqrt (acceleration_X + acceleration_Y + acceleration_Z);
 
-                    this.$data.intensity = Math.round ((raw_intensity - 0.1) / 0.26 * 10);
+                    let foo = Math.round ((raw_intensity - 0.1) / 0.26 * 10);
                     //this.$data.intensity = Math.floor (raw_intensity * 10);
+
+                    if (foo < 0) {
+                        foo = 0;
+                    }
+
+                    this.$data.intensity = foo;
 
                     this.$data.axios.post ('http://localhost:3000/shakes', {"intensity": this.$data.intensity})
                         .then (res => console.log (res))
