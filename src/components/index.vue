@@ -295,7 +295,7 @@
                     this.$data.intensity = Math.sqrt (acceleration_X + acceleration_Y + acceleration_Z);
                     this.$data.intensity = Math.floor (this.$data.intensity * 10);
 
-                    this.$data.axios.post ('/shakes', {"intensity": this.$data.intensity})
+                    this.$data.axios.post ('http://localhost:3000/shakes', {"intensity": this.$data.intensity})
                         .then (res => console.log (res))
                         .catch (err => console.warn (err));
 
