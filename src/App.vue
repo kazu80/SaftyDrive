@@ -6,10 +6,10 @@
 
 <style>
   #app {
-    position: absolute;
-    width: 100%;
-    height: 100vh;
-    background: green;
+    position   : relative;
+    width      : 100%;
+    height     : 100vh;
+    background : green;
   }
 </style>
 
@@ -24,10 +24,6 @@
                 mode : 'index',
                 point: 0,
             }
-        },
-
-        created: function () {
-            console.log("created!");
         },
 
         methods: {

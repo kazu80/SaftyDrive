@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" :class="{ 'background-color-animation_stop' : true}">
 
         <div class="_header">
             <a class="btn-floating btn-large waves-effect waves-light blue" href="javascript:void(0)" @click="changeMode('index')">index</a>
@@ -9,9 +9,9 @@
 
         <_car v-if="mode == 'index'"></_car>
 
-        <_tire class="tire_component" v-if="mode == 'index'"></_tire>
+        <_tire class="tire_component" v-if="mode == 'index_'"></_tire>
 
-        <_steering class="steering_component" v-if="mode == 'index'"></_steering>
+        <_steering class="steering_component" v-if="mode == 'index_'"></_steering>
 
         <_driveData
                 :speed="speed"
@@ -42,7 +42,18 @@
 
 <style>
 
-    #app {
+    ._header {
+
+    }
+
+    ._header a {
+        margin-right : 10px;
+    }
+
+    .container {
+        width            : 100%;
+        height           : 100%;
+        padding          : 20px;
         background-color : deepskyblue;
 
         /*
@@ -52,7 +63,24 @@
         */
     }
 
-    @keyframes color {
+    .background-color-animation_stop {
+        animation-name            : color_stop;
+        animation-duration        : 2000ms;
+        animation-iteration-count : infinite;
+        animation-direction       : alternate;
+    }
+
+    @keyframes color_stop {
+        0% {
+            background-color : lightgray;
+        }
+
+        100% {
+            background-color : darkgray;
+        }
+    }
+
+    @keyframes color_normal {
         0% {
             background-color : deepskyblue;
         }
@@ -280,10 +308,6 @@
                     this.$data.max_params.gyro_roll &&
                     this.$data.max_params.gyro_yaw
                 ) {
-
-                    // send server !!!
-                    console.log (this.$data.max_params);
-
                     let acceleration_X = this.$data.max_params.acceleration_X;
                     let acceleration_Y = this.$data.max_params.acceleration_Y;
                     let acceleration_Z = this.$data.max_params.acceleration_Z;
@@ -292,13 +316,16 @@
                     acceleration_Y = acceleration_Y * acceleration_Y;
                     acceleration_Z = (acceleration_Z - 1) * (acceleration_Z - 1);
 
-                    this.$data.intensity = Math.sqrt (acceleration_X + acceleration_Y + acceleration_Z);
-                    this.$data.intensity = Math.floor (this.$data.intensity * 10);
+                    let raw_intensity = Math.sqrt (acceleration_X + acceleration_Y + acceleration_Z);
+
+                    this.$data.intensity = Math.round ((raw_intensity - 0.1) / 0.26 * 10);
+                    //this.$data.intensity = Math.floor (raw_intensity * 10);
+
+                    console.log (`${raw_intensity}, ${this.$data.intensity}`);
 
                     this.$data.axios.post ('http://localhost:3000/shakes', {"intensity": this.$data.intensity})
                         .then (res => console.log (res))
                         .catch (err => console.warn (err));
-
 
                     //
                     this.$data.max_params = {
