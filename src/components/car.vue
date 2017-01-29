@@ -24,8 +24,9 @@
         background-position : center;
         transform           : rotate(45deg);
         font-size           : 3rem;
-        color               : deeppink;
-        text-shadow         : 1px 1px 3px #ffffff;
+        font-weight         : bold;
+        color               : #ffcee9;
+        text-shadow         : 0 0 3px rgba(0,0,0,.8);
         text-align          : center;
     }
 
