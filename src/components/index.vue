@@ -1,66 +1,81 @@
 <template>
     <div class="container">
 
-        <h3 class="page_title">Driving Data</h3>
-
-        <div class="video-container">
-            <iframe style="transform:scale(0.35);transform-origin:0 0;" width="853" height="480" src="http://13.112.91.95:3000/cluster/controlindex.html?json=20170110-1818-chiba-makuhari_full.json" frameborder="0" allowfullscreen></iframe>
+        <div class="_header">
+            <a class="btn-floating btn-large waves-effect waves-light blue" href="javascript:void(0)" @click="changeMode('index')">index</a>
+            <a class="btn-floating btn-large waves-effect waves-light yellow" href="javascript:void(0)" @click="changeMode('driveData')">Data</a>
+            <a class="btn-floating btn-large waves-effect waves-light red" href="javascript:void(0)" @click="changeMode('intensity')">intensity</a>
         </div>
 
-        <div class="data-wrapper">
-            <ul class="data">
-                <li>speed: {{speed / 1000}}km/h</li>
-                <li>Acceleration X: {{ acceleration_X }}G</li>
-                <li>Acceleration Y: {{ acceleration_Y }}G</li>
-                <li>Acceleration Z: {{ acceleration_Z }}G</li>
-                <li>Gyro pitch: {{ gyro_pitch }}</li>
-                <li>Gyro roll: {{ gyro_roll }}</li>
-                <li>Gyro yaw: {{ gyro_yaw }}</li>
-                <li>steeringWheel: {{ steeringWheel }}</li>
-                <li>brakeOperation: {{ brakeOperation }}</li>
-                <li>acceleratorPedalPosition: {{ acceleratorPedalPosition }}</li>
-                <li>heartrate: {{heartrate}}</li>
-                <li>emotionCluster: {{emotionCluster}}</li>
-                <li>latitude: {{latitude}}</li>
-                <li>longitude: {{longitude}}</li>
-            </ul>
+        <_car v-if="mode == 'index'"></_car>
 
-        </div>
+        <_tire class="tire_component" v-if="mode == 'index'"></_tire>
 
-        <!--
-        <div class="waves-effect waves-light btn btn_start" @click="changeMode('start')">START</div>
-        -->
+        <_steering class="steering_component" v-if="mode == 'index'"></_steering>
+
+        <_driveData
+                :speed="speed"
+                :acceleration_X="acceleration_X"
+                :acceleration_Y="acceleration_Y"
+                :acceleration_Z="acceleration_Z"
+                :gyro_pitch="gyro_pitch"
+                :gyro_roll="gyro_roll"
+                :gyro_yaw="gyro_yaw"
+                :steeringWheel="steeringWheel"
+                :brakeOperation="brakeOperation"
+                :acceleratorPedalPosition="acceleratorPedalPosition"
+                :acceleration_y="acceleration_y"
+                :acceleration_z="acceleration_z"
+                :heartrate="heartrate"
+                :emotionCluster="emotionCluster"
+                :latitude="latitude"
+                :longitude="longitude"
+                v-if="mode == 'driveData'"
+        ></_driveData>
+
+        <_video v-if="mode == 'driveMovie'"></_video>
+
+        <_intensity :intensity="intensity" v-if="mode == 'intensity'"></_intensity>
+
     </div>
 </template>
 
 <style>
-    .page_title {
-        margin-top : 30px;
-        width      : 100%;
-        font-size  : 4rem;
-        text-align : left;
-        z-index    : 10;
+
+    #app {
+        background-color : deepskyblue;
+
+        /*
+        animation-name: color;
+        animation-duration: 3000ms;
+        animation-iteration-count: infinite;
+        */
     }
 
-    .video-container {
-        position       : absolute;
-        top            : 0;
-        left           : 500px;
-        padding-right  : 1000px;
-        padding-bottom : 1000px;
+    @keyframes color {
+        0% {
+            background-color : deepskyblue;
+        }
+
+        33% {
+            background-color : yellowgreen;
+        }
+
+        66% {
+            background-color : orangered;
+        }
     }
 
-    .data-wrapper {
-        margin-top : 30px;
-        width      : 100%;
-        font-size  : 2rem;
-        text-align : left;
+    .steering_component {
+        position : absolute;
+        left     : 50px;
+        bottom   : 120px;
     }
 
-    .data-wrapper .data {
-        display    : inline-block;
-        text-align : left;
-        z-index    : 10;
+    .tire_component {
+        position : absolute;
+        right    : 50px;
+        bottom   : 120px;
     }
 
     .point {
@@ -117,10 +132,6 @@
                 emotionCluster          : 0,
                 latitude                : 0,
                 longitude               : 0,
-                //altitude: 0,
-                //heading: 0,
-                //speed: 0,
-
                 max_params              : {
                     acceleration_X: 0,
                     acceleration_Y: 0,
@@ -129,6 +140,9 @@
                     gyro_roll     : 0,
                     gyro_yaw      : 0,
                 },
+
+                axios                   : require ('axios'),
+                intensity               : 0,
             }
         },
 
@@ -270,6 +284,22 @@
                     // send server !!!
                     console.log (this.$data.max_params);
 
+                    let acceleration_X = this.$data.max_params.acceleration_X;
+                    let acceleration_Y = this.$data.max_params.acceleration_Y;
+                    let acceleration_Z = this.$data.max_params.acceleration_Z;
+
+                    acceleration_X = acceleration_X * acceleration_X;
+                    acceleration_Y = acceleration_Y * acceleration_Y;
+                    acceleration_Z = (acceleration_Z - 1) * (acceleration_Z - 1);
+
+                    this.$data.intensity = Math.sqrt (acceleration_X + acceleration_Y + acceleration_Z);
+                    this.$data.intensity = Math.floor (this.$data.intensity * 10);
+
+                    this.$data.axios.post ('/shakes', {"intensity": this.$data.intensity})
+                        .then (res => console.log (res))
+                        .catch (err => console.warn (err));
+
+
                     //
                     this.$data.max_params = {
                         acceleration_X: 0,
@@ -285,6 +315,15 @@
             changeMode: function (val) {
                 this.$emit ("changeMode", val);
             }
+        },
+
+        components: {
+            '_car'      : require ('./car.vue'),
+            '_driveData': require ('./driveData.vue'),
+            '_tire'     : require ('./tire.vue'),
+            '_steering' : require ('./steering.vue'),
+            '_video'    : require ('./video.vue'),
+            '_intensity': require ('./intensity.vue'),
         }
     }
 </script>

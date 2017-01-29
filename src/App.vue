@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <_index :mode="mode" :point="point" v-on:changeMode="changeMode" v-if="mode == 'index'"></_index>
-    <_start :mode="mode" :point="point" v-on:changeMode="changeMode" v-if="mode == 'start'"></_start>
-    <_end :mode="mode" point="60" v-on:changeMode="changeMode" v-if="mode == 'end'"></_end>
+    <_index :mode="mode" :point="point" v-on:changeMode="changeMode"></_index>
   </div>
 </template>
 
